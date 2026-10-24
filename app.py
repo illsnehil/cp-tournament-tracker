@@ -13,18 +13,26 @@ st.markdown("Track your upcoming tournaments and monitor your past progress acro
 # Connect to Google Sheets
 @st.cache_resource
 def get_sheets_client():
-    # Modern gspread service account auth using credentials.json in the same folder
-    return gspread.service_account(filename="credentials.json")
+    # Check if secrets are configured in Streamlit Cloud
+    if "gcp_service_account" in st.secrets:
+        credentials_dict = dict(st.secrets["gcp_service_account"])
+        return gspread.service_account_from_dict(credentials_dict)
+    else:
+        # Fallback for local testing
+        return gspread.service_account(filename="credentials.json")
 
 try:
-    client = get_sheets_client()
+    # Diagnostic: Print what keys are available in secrets
+    st.write("Available secret keys:", list(st.secrets.keys()))
+    
+    if "gcp_service_account" in st.secrets:
+        credentials_dict = dict(st.secrets["gcp_service_account"])
+        client = gspread.service_account_from_dict(credentials_dict)
+    else:
+        client = gspread.service_account(filename="credentials.json")
+
     sheet = client.open("Competitive Programming Tournament Tracker")
-    
-    upcoming_worksheet = sheet.worksheet("Upcoming Contests")
-    progress_worksheet = sheet.worksheet("My Progress Log")
-    
-    upcoming_df = pd.DataFrame(upcoming_worksheet.get_all_records())
-    progress_df = pd.DataFrame(progress_worksheet.get_all_records())
+    # ... rest of your code ...
     
 except Exception as e:
     st.error("⚠️ Connection Error")
