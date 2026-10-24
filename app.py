@@ -29,8 +29,8 @@ try:
     sheet = client.open("Competitive Programming Tournament Tracker")
 
     # Fetch worksheets
-    upcoming_worksheet = sheet.worksheet("Upcoming")
-    progress_worksheet = sheet.worksheet("Progress")
+    upcoming_worksheet = sheet.worksheet("Upcoming Contests")
+    progress_worksheet = sheet.worksheet("My Progress Log")
 
     # Convert records to DataFrames
     upcoming_df = pd.DataFrame(upcoming_worksheet.get_all_records())
